@@ -4,9 +4,20 @@ import (
 	"context"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func TestResolvedPromise(t *testing.T) {
+	promise := NewPromise(func(resolve func(int), reject func(error)) {
+		time.Sleep(time.Second * 2)
+		resolve(1)
+	})
+	value, err := promise.Await(context.Background())
+	assert.Equal(t, 1, value)
+	assert.Nil(t, err)
+}
 
 func TestUnresolvedPromise(t *testing.T) {
 	// Creating a promise that doesn't resolve any value
