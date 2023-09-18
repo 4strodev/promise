@@ -2,23 +2,34 @@ package promise
 
 import (
 	"context"
-	"sync"
 )
 
-func AwaitAll[T any](ctx context.Context, promises ...Promise[T]) ([]T, error) {
-	mutex := sync.Mutex{}
-	resolvedValues := make([]T, len(promises))
-	for _, promise := range promises {
-		// TODO await with context
-		go func(promise Promise[T]) {
-			mutex.Lock()
-			value, err := promise.Await(ctx)
-			if err != nil {
-	
-			}
-			resolvedValues = append(resolvedValues, value)
-		}(promise)
-	}
+func AwaitAll[T any](ctx context.Context, promises ...*Promise[T]) *Promise[[]T] {
 
-	return resolvedValues, nil
+	resultPromise := NewPromise(func(resolve func([]T), reject func(error)) {
+		resolvedValuesChannel := make(chan T, len(promises))
+		resolvedValues := make([]T, 0, len(promises))
+
+		for _, promise := range promises {
+			go func(promise *Promise[T]) {
+				value, err := promise.Await(ctx)
+				if err != nil {
+					reject(err)
+				}
+				resolvedValuesChannel <- value
+			}(promise)
+		}
+
+		for value := range resolvedValuesChannel {
+			resolvedValues = append(resolvedValues, value)
+			if len(resolvedValues) == len(promises) {
+				close(resolvedValuesChannel)
+			}
+		}
+
+		resolve(resolvedValues)
+
+	})
+
+	return resultPromise
 }

@@ -22,6 +22,7 @@ func NewPromise[T any](callback func(resolve func(T), reject func(error))) *Prom
 	waitGroup.Add(1)
 	go func() {
 		defer waitGroup.Done()
+		defer promise.handlePanic()
 		callback(promise.resolve, promise.reject)
 	}()
 
@@ -31,6 +32,13 @@ func NewPromise[T any](callback func(resolve func(T), reject func(error))) *Prom
 	}()
 
 	return promise
+}
+
+func (self *Promise[T]) handlePanic() {
+	recovered := recover()
+	if recovered != nil {
+		self.reject(fmt.Errorf("Error on promise: %v", recovered))
+	}
 }
 
 func (self *Promise[T]) resolve(value T) {
@@ -47,17 +55,15 @@ func (self *Promise[T]) reject(err error) {
 		return
 	}
 	self.err = err
-	fmt.Println(self.err)
 	close(self.done)
 	self.completed = true
 }
 
 func (self *Promise[T]) Await(ctx context.Context) (T, error) {
-	select {
-	case <-self.done:
-		return self.value, self.err
-	case <-ctx.Done():
-		return self.value, self.err
-	}
-
+	go func() {
+		<-ctx.Done()
+		self.reject(fmt.Errorf("Context finished"))
+	}()
+	<-self.done
+	return self.value, self.err
 }
