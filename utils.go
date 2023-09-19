@@ -4,7 +4,9 @@ import (
 	"context"
 )
 
-func AwaitAll[T any](ctx context.Context, promises ...*Promise[T]) *Promise[[]T] {
+// Merge all promises and return a promise that will return an array of value
+// those values will be the values obtained from promises
+func MergeAll[T any](ctx context.Context, promises ...*Promise[T]) *Promise[[]T] {
 
 	resultPromise := NewPromise(func(resolve func([]T), reject func(error)) {
 		resolvedValuesChannel := make(chan T, len(promises))
