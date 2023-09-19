@@ -10,17 +10,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var (
-	randGen = rand.New(rand.NewSource(time.Now().Unix()))
-)
-
 func TestMergeAllResolved(t *testing.T) {
 	promises := make([]*Promise[int], 0, 10)
 
 	for i := 0; i < 10; i++ {
 		promise := NewPromise(func(resolve func(int), reject func(error)) {
 			time.Sleep(time.Millisecond * 100)
-			resolve(randGen.Intn(10))
+			resolve(rand.Intn(10))
 		})
 		promises = append(promises, promise)
 	}
@@ -39,7 +35,7 @@ func TestMergeAllWithOneRejected(t *testing.T) {
 	for i := 0; i < 9; i++ {
 		promise := NewPromise(func(resolve func(int), reject func(error)) {
 			time.Sleep(time.Millisecond * 100)
-			resolve(randGen.Intn(10))
+			resolve(rand.Intn(10))
 		})
 		promises = append(promises, promise)
 	}
@@ -73,8 +69,18 @@ func TestTheFuckingBug(t *testing.T) {
 		jobs = append(jobs, job)
 	}
 
-	fmt.Println(jobs)
-	// Don't use range it saves a pointer and cause many bugs
+	// Don't use range it behaves like if it uses a pointer saves a pointer and cause many bugs
+	// If you prefer to user range save job values before create promise
+	/*
+	for _, job := range jobs {
+		val1, val2 := job.Value1, job.Value2
+		promise := NewPromise(func(resolve func(int), reject func(error)) {
+			result := val1 + val2
+			resolve(result)
+		})
+		promises = append(promises, promise)
+	}
+	*/
 	for i := 0; i < len(jobs); i++ {
 		job := jobs[i]
 		promise := NewPromise(func(resolve func(int), reject func(error)) {
