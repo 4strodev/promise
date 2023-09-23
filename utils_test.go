@@ -87,7 +87,6 @@ func TestTheFuckingBug(t *testing.T) {
 	defer cancel()
 
 	values, err := MergeAll(ctx, promises...).Await(ctx)
-	fmt.Println(values)
 	assert.NotEmpty(t, values)
 	assert.Nil(t, err)
 }
