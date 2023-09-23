@@ -9,11 +9,12 @@ import (
 	"github.com/4strodev/promise"
 )
 
+type Job struct {
+	Value1 int
+	Value2 int
+}
+
 func main() {
-	type Job struct {
-		Value1 int
-		Value2 int
-	}
 
 	jobs := []Job{}
 	promises := []*promise.Promise[int]{}
