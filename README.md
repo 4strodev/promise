@@ -20,12 +20,12 @@ import (
 )
 
 func main() {
-	promise := promise.NewPromise(func(resolve func(int), reject func(error)) {
+	p := promise.New(func(resolve func(int), reject func(error)) {
 		time.Sleep(time.Millisecond * 100)
 		resolve(1)
 	})
 
-	result, err := promise.Await(context.Background())
+	result, err := p.Await(context.Background())
 	if err != nil {
 		panic(err)
 	}
@@ -71,11 +71,11 @@ func main() {
 		// that caused a lot of bugs and will be changed in go 1.22
 		// for more information see https://go.dev/blog/loopvar-preview
 		job := _job
-		promise := promise.NewPromise(func(resolve func(int), reject func(error)) {
+		p := promise.New(func(resolve func(int), reject func(error)) {
 			result := job.Value1 + job.Value2
 			resolve(result)
 		})
-		promises = append(promises, promise)
+		promises = append(promises, p)
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
