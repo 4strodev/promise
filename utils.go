@@ -8,7 +8,7 @@ import (
 // those values will be the values obtained from promises
 func MergeAll[T any](ctx context.Context, promises ...*Promise[T]) *Promise[[]T] {
 
-	resultPromise := NewPromise(func(resolve func([]T), reject func(error)) {
+	resultPromise := New(func(resolve func([]T), reject func(error)) {
 		resolvedValuesChannel := make(chan T, len(promises))
 		resolvedValues := make([]T, 0, len(promises))
 

@@ -10,7 +10,7 @@ import (
 )
 
 func TestResolvedPromise(t *testing.T) {
-	promise := NewPromise(func(resolve func(int), reject func(error)) {
+	promise := New(func(resolve func(int), reject func(error)) {
 		time.Sleep(time.Millisecond * 100)
 		resolve(1)
 	})
@@ -21,7 +21,7 @@ func TestResolvedPromise(t *testing.T) {
 
 func TestUnresolvedPromise(t *testing.T) {
 	// Creating a promise that doesn't resolve any value
-	promise := NewPromise(func(resolve func(int), reject func(error)) {
+	promise := New(func(resolve func(int), reject func(error)) {
 		fmt.Println("Executing callback")
 	})
 
@@ -31,7 +31,7 @@ func TestUnresolvedPromise(t *testing.T) {
 }
 
 func TestPanicPromise(t *testing.T) {
-	promise := NewPromise(func(resolve func(int), reject func(error)) {
+	promise := New(func(resolve func(int), reject func(error)) {
 		panic("A simple error")
 	})
 
@@ -40,7 +40,7 @@ func TestPanicPromise(t *testing.T) {
 }
 
 func TestTimeoutPromise(t *testing.T) {
-	promise := NewPromise(func(resolve func(int), reject func(error)) {
+	promise := New(func(resolve func(int), reject func(error)) {
 		time.Sleep(time.Millisecond * 100)
 		panic("A simple error")
 	})

@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	promise := promise.NewPromise(func(resolve func(int), reject func(error)) {
+	promise := promise.New(func(resolve func(int), reject func(error)) {
 		time.Sleep(time.Millisecond * 100)
 		resolve(1)
 	})

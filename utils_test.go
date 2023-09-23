@@ -14,7 +14,7 @@ func TestMergeAllResolved(t *testing.T) {
 	promises := make([]*Promise[int], 0, 10)
 
 	for i := 0; i < 10; i++ {
-		promise := NewPromise(func(resolve func(int), reject func(error)) {
+		promise := New(func(resolve func(int), reject func(error)) {
 			time.Sleep(time.Millisecond * 100)
 			resolve(rand.Intn(10))
 		})
@@ -33,14 +33,14 @@ func TestMergeAllWithOneRejected(t *testing.T) {
 	promises := make([]*Promise[int], 0, 10)
 
 	for i := 0; i < 9; i++ {
-		promise := NewPromise(func(resolve func(int), reject func(error)) {
+		promise := New(func(resolve func(int), reject func(error)) {
 			time.Sleep(time.Millisecond * 100)
 			resolve(rand.Intn(10))
 		})
 		promises = append(promises, promise)
 	}
 
-	promise := NewPromise(func(resolve func(int), reject func(error)) {
+	promise := New(func(resolve func(int), reject func(error)) {
 		reject(fmt.Errorf("This promise was rejected"))
 	})
 	promises = append(promises, promise)
@@ -76,7 +76,7 @@ func TestTheFuckingBug(t *testing.T) {
 		// that caused a lot of bugs and will be changed in go 1.22
 		// for more information see https://go.dev/blog/loopvar-preview
 		job := _job
-		promise := NewPromise(func(resolve func(int), reject func(error)) {
+		promise := New(func(resolve func(int), reject func(error)) {
 			result := job.Value1 + job.Value2
 			resolve(result)
 		})

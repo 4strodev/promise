@@ -14,7 +14,7 @@ type Promise[T any] struct {
 	completed bool
 }
 
-func NewPromise[T any](callback func(resolve func(T), reject func(error))) *Promise[T] {
+func New[T any](callback func(resolve func(T), reject func(error))) *Promise[T] {
 	promise := new(Promise[T])
 	promise.completed = false
 	promise.done = make(chan struct{})
