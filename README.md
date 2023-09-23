@@ -21,7 +21,7 @@ import (
 
 func main() {
 	p := promise.New(func(resolve func(int), reject func(error)) {
-		time.Sleep(time.Millisecond * 100)
+		time.Sleep(1 * time.Second)
 		resolve(1)
 	})
 
@@ -29,8 +29,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	// Result will be 1
 	fmt.Println(result)
+	// Output: 1
 }
 ```
 

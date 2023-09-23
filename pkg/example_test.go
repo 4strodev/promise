@@ -1,4 +1,4 @@
-package promise_examples
+package promise_test
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/4strodev/promise"
+	"github.com/4strodev/promise/pkg"
 )
 
 type Job struct {
