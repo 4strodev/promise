@@ -69,20 +69,12 @@ func TestTheFuckingBug(t *testing.T) {
 		jobs = append(jobs, job)
 	}
 
-	// Don't use range it behaves like if it uses a pointer saves a pointer and cause many bugs
-	// If you prefer to user range save job values before create promise
-	/*
-	for _, job := range jobs {
-		val1, val2 := job.Value1, job.Value2
-		promise := NewPromise(func(resolve func(int), reject func(error)) {
-			result := val1 + val2
-			resolve(result)
-		})
-		promises = append(promises, promise)
-	}
-	*/
-	for i := 0; i < len(jobs); i++ {
-		job := jobs[i]
+	for _, _job := range jobs {
+		// For new go developers loop variables are loop scoped
+		// that means that the variable _job is declared only once
+		// and for each iteration the value is overrited
+		// that caused a lot of bugs and will be changed in go 1.22
+		job := _job
 		promise := NewPromise(func(resolve func(int), reject func(error)) {
 			result := job.Value1 + job.Value2
 			resolve(result)

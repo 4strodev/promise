@@ -10,6 +10,7 @@ type Promise[T any] struct {
 	value     T
 	err       error
 	done      chan struct{}
+	locker    sync.Mutex
 	completed bool
 }
 
@@ -34,6 +35,19 @@ func NewPromise[T any](callback func(resolve func(T), reject func(error))) *Prom
 	return promise
 }
 
+func (self *Promise[T]) complete() {
+	self.locker.Lock()
+	self.completed = true
+	self.locker.Unlock()
+}
+
+func (self *Promise[T]) isCompleted() bool {
+	self.locker.Lock()
+	result := self.completed
+	self.locker.Unlock()
+	return result
+}
+
 func (self *Promise[T]) handlePanic() {
 	recovered := recover()
 	if recovered != nil {
@@ -42,21 +56,21 @@ func (self *Promise[T]) handlePanic() {
 }
 
 func (self *Promise[T]) resolve(value T) {
-	if self.completed {
+	if self.isCompleted() {
 		return
 	}
 	self.value = value
 	close(self.done)
-	self.completed = true
+	self.complete()
 }
 
 func (self *Promise[T]) reject(err error) {
-	if self.completed {
+	if self.isCompleted() {
 		return
 	}
 	self.err = err
 	close(self.done)
-	self.completed = true
+	self.complete()
 }
 
 func (self *Promise[T]) Await(ctx context.Context) (T, error) {
