@@ -77,7 +77,7 @@ func (p *Promise[T]) reject(err error) {
 func (p *Promise[T]) Await(ctx context.Context) (T, error) {
 	go func() {
 		<-ctx.Done()
-		p.reject(fmt.Errorf("Context finished"))
+		p.reject(ctx.Err())
 	}()
 	<-p.done
 	return p.value, p.err
