@@ -1,4 +1,4 @@
-package main
+package examples
 
 import (
 	"context"
@@ -12,6 +12,20 @@ import (
 type Job struct {
 	Value1 int
 	Value2 int
+}
+
+func ExamplePromise() {
+	p := promise.New(func(resolve func(int), reject func(error)) {
+		time.Sleep(1 * time.Second)
+		resolve(1)
+	})
+
+	result, err := p.Await(context.Background())
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(result)
+	// Output: 1
 }
 
 func main() {
@@ -33,11 +47,11 @@ func main() {
 		// that caused a lot of bugs and will be changed in go 1.22
 		// for more information see https://go.dev/blog/loopvar-preview
 		job := _job
-		promise := promise.New(func(resolve func(int), reject func(error)) {
+		p := promise.New(func(resolve func(int), reject func(error)) {
 			result := job.Value1 + job.Value2
 			resolve(result)
 		})
-		promises = append(promises, promise)
+		promises = append(promises, p)
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)

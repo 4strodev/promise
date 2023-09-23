@@ -14,6 +14,7 @@ type Promise[T any] struct {
 	completed bool
 }
 
+// Creates a new promise and exeuctes callback handling a possible panic
 func New[T any](callback func(resolve func(T), reject func(error))) *Promise[T] {
 	promise := new(Promise[T])
 	promise.completed = false
