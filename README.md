@@ -53,7 +53,6 @@ type Job struct {
 }
 
 func main() {
-
 	jobs := []Job{}
 	promises := []*promise.Promise[int]{}
 	for i := 0; i < 10; i++ {
