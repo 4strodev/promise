@@ -35,49 +35,49 @@ func New[T any](callback func(resolve func(T), reject func(error))) *Promise[T] 
 	return promise
 }
 
-func (self *Promise[T]) complete() {
-	self.locker.Lock()
-	self.completed = true
-	self.locker.Unlock()
+func (p *Promise[T]) complete() {
+	p.locker.Lock()
+	p.completed = true
+	p.locker.Unlock()
 }
 
-func (self *Promise[T]) isCompleted() bool {
-	self.locker.Lock()
-	result := self.completed
-	self.locker.Unlock()
+func (p *Promise[T]) isCompleted() bool {
+	p.locker.Lock()
+	result := p.completed
+	p.locker.Unlock()
 	return result
 }
 
-func (self *Promise[T]) handlePanic() {
+func (p *Promise[T]) handlePanic() {
 	recovered := recover()
 	if recovered != nil {
-		self.reject(fmt.Errorf("Error on promise: %v", recovered))
+		p.reject(fmt.Errorf("Error on promise: %v", recovered))
 	}
 }
 
-func (self *Promise[T]) resolve(value T) {
-	if self.isCompleted() {
+func (p *Promise[T]) resolve(value T) {
+	if p.isCompleted() {
 		return
 	}
-	self.value = value
-	close(self.done)
-	self.complete()
+	p.value = value
+	close(p.done)
+	p.complete()
 }
 
-func (self *Promise[T]) reject(err error) {
-	if self.isCompleted() {
+func (p *Promise[T]) reject(err error) {
+	if p.isCompleted() {
 		return
 	}
-	self.err = err
-	close(self.done)
-	self.complete()
+	p.err = err
+	close(p.done)
+	p.complete()
 }
 
-func (self *Promise[T]) Await(ctx context.Context) (T, error) {
+func (p *Promise[T]) Await(ctx context.Context) (T, error) {
 	go func() {
 		<-ctx.Done()
-		self.reject(fmt.Errorf("Context finished"))
+		p.reject(fmt.Errorf("Context finished"))
 	}()
-	<-self.done
-	return self.value, self.err
+	<-p.done
+	return p.value, p.err
 }
