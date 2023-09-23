@@ -74,6 +74,7 @@ func TestTheFuckingBug(t *testing.T) {
 		// that means that the variable _job is declared only once
 		// and for each iteration the value is overrited
 		// that caused a lot of bugs and will be changed in go 1.22
+		// for more information see https://go.dev/blog/loopvar-preview
 		job := _job
 		promise := NewPromise(func(resolve func(int), reject func(error)) {
 			result := job.Value1 + job.Value2
