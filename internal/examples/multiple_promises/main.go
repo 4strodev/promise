@@ -43,8 +43,8 @@ func main() {
 	defer cancel()
 
 	values, err := promise.MergeAll(ctx, promises...).Await(ctx)
-    if err != nil {
-        panic(err)
-    }
+	if err != nil {
+		panic(err)
+	}
 	fmt.Println(values)
 }
