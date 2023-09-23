@@ -1,4 +1,4 @@
-package examples
+package promise_examples
 
 import (
 	"context"
@@ -14,7 +14,7 @@ type Job struct {
 	Value2 int
 }
 
-func ExamplePromise() {
+func ExampleNew() {
 	p := promise.New(func(resolve func(int), reject func(error)) {
 		time.Sleep(1 * time.Second)
 		resolve(1)
@@ -28,8 +28,7 @@ func ExamplePromise() {
 	// Output: 1
 }
 
-func main() {
-
+func ExampleMergeAll() {
 	jobs := []Job{}
 	promises := []*promise.Promise[int]{}
 	for i := 0; i < 10; i++ {
