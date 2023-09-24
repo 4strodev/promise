@@ -88,3 +88,9 @@ func main() {
 }
 ```
 
+## Suggestions are accepted
+It does not mean that all suggestions will apply. It means that the suggestions will be
+read and evaluated. Feel free to make any PR or Issue. Obviously, keep in mind that this is a personal project.
+Which I made open source under the MIT license. I don't have much time, but I promise I will be
+checking the repository 😉.
+
