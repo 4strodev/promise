@@ -15,7 +15,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/4strodev/promise"
+	"github.com/4strodev/promise/pkg"
 	"time"
 )
 
@@ -44,7 +44,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/4strodev/promise"
+	"github.com/4strodev/promise/pkg"
 )
 
 type Job struct {
