@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"math/rand"
+	"strconv"
 	"testing"
 	"time"
 
@@ -53,3 +54,35 @@ func TestMergeAllWithOneRejected(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
+func TestThen(t *testing.T) {
+	prom := New(func(resolve func(int), reject func(error)) {
+		time.Sleep(time.Millisecond * 1)
+		resolve(1)
+	})
+	ctx := context.Background()
+	newProm := Then(ctx, prom, func(num int) string {
+		time.Sleep(time.Millisecond * 1)
+		return strconv.Itoa(num)
+	})
+	value, err := newProm.Await(ctx)
+	assert.Nil(t, err)
+	assert.NotEmpty(t, value)
+}
+
+func TestRejectedThen(t *testing.T) {
+	prom := New(func(resolve func(int), reject func(error)) {
+		time.Sleep(time.Millisecond * 1)
+		resolve(1)
+	})
+	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond * 1)
+	defer cancel()
+
+	newProm := Then(ctx, prom, func(num int) string {
+		time.Sleep(time.Millisecond * 1)
+		return strconv.Itoa(num)
+	})
+
+	value, err := newProm.Await(ctx)
+	assert.NotNil(t, err)
+	assert.Empty(t, value)
+}
