@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"math/rand"
+	"strconv"
 	"time"
 
 	"github.com/4strodev/promise/pkg"
@@ -61,4 +62,22 @@ func ExampleMergeAll() {
 		panic(err)
 	}
 	fmt.Println(values)
+}
+
+func ExampleThen() {
+	p := promise.New(func(resolve func(int), reject func(error)) {
+		time.Sleep(time.Millisecond * 1)
+		resolve(1)
+	})
+	ctx := context.Background()
+	newPromise := promise.Then(ctx, p, func(num int) string {
+		time.Sleep(time.Millisecond * 1)
+		return strconv.Itoa(num * 2)
+	})
+	value, err := newPromise.Await(ctx)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(value)
+	// Output: 2
 }
