@@ -88,6 +88,37 @@ func main() {
 }
 ```
 
+Chaining promises
+```go
+package main
+
+import (
+    "time"
+    "strconv"
+    "context"
+
+    "github.com/4strodev/promise"
+)
+
+func main() {
+	p := promise.New(func(resolve func(int), reject func(error)) {
+		time.Sleep(time.Millisecond * 1)
+		resolve(1)
+	})
+	ctx := context.Background()
+	newPromise := promise.Then(ctx, p, func(num int) string {
+		time.Sleep(time.Millisecond * 1)
+		return strconv.Itoa(num * 2)
+	})
+	value, err := newPromise.Await(ctx)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(value)
+	// Output: 2
+}
+```
+
 ## Suggestions are accepted
 It does not mean that all suggestions will apply. It means that the suggestions will be
 read and evaluated. Feel free to make any PR or Issue. Obviously, keep in mind that this is a personal project.
