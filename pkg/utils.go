@@ -7,11 +7,13 @@ import (
 // Merge all promises and return a promise that will return an array of value
 // those values will be the values obtained from promises
 func MergeAll[T any](ctx context.Context, promises ...*Promise[T]) *Promise[[]T] {
-
 	resultPromise := New(func(resolve func([]T), reject func(error)) {
 		resolvedValuesChannel := make(chan T, len(promises))
 		resolvedValues := make([]T, 0, len(promises))
-
+		if len(promises) == 0 {
+			resolve(resolvedValues)
+			return
+		}
 		for _, promise := range promises {
 			go func(promise *Promise[T]) {
 				value, err := promise.Await(ctx)
