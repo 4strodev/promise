@@ -36,6 +36,20 @@ func New[T any](callback func(resolve func(T), reject func(error))) *Promise[T] 
 	return promise
 }
 
+// Creates a promise that resolves provided value
+func Resolve[T any](value T) *Promise[T] {
+	return New(func(resolve func(T), reject func(error)) {
+		resolve(value)
+	})
+}
+
+// Creates a promise that rejects provided error
+func Reject[T any](err error) *Promise[T] {
+	return New(func(resolve func(T), reject func(error)) {
+		reject(err)
+	})
+}
+
 func (p *Promise[T]) complete() {
 	p.locker.Lock()
 	p.completed = true
@@ -77,7 +91,7 @@ func (p *Promise[T]) reject(err error) {
 func (p *Promise[T]) Await(ctx context.Context) (T, error) {
 	go func() {
 		<-ctx.Done()
-		p.reject(ctx.Err())
+		p.reject(context.Cause(ctx))
 	}()
 	<-p.done
 	return p.value, p.err
