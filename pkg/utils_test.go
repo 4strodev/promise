@@ -60,9 +60,9 @@ func TestThen(t *testing.T) {
 		resolve(1)
 	})
 	ctx := context.Background()
-	newProm := Then(ctx, prom, func(num int) string {
+	newProm := Then(ctx, prom, func(num int) *Promise[string] {
 		time.Sleep(time.Millisecond * 1)
-		return strconv.Itoa(num)
+		return Resolve(strconv.Itoa(num))
 	})
 	value, err := newProm.Await(ctx)
 	assert.Nil(t, err)
@@ -77,9 +77,9 @@ func TestRejectedThen(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond * 1)
 	defer cancel()
 
-	newProm := Then(ctx, prom, func(num int) string {
+	newProm := Then(ctx, prom, func(num int) *Promise[string] {
 		time.Sleep(time.Millisecond * 1)
-		return strconv.Itoa(num)
+		return Resolve(strconv.Itoa(num))
 	})
 
 	value, err := newProm.Await(ctx)

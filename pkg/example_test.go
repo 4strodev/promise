@@ -70,9 +70,9 @@ func ExampleThen() {
 		resolve(1)
 	})
 	ctx := context.Background()
-	newPromise := promise.Then(ctx, p, func(num int) string {
+	newPromise := promise.Then(ctx, p, func(num int) *promise.Promise[string] {
 		time.Sleep(time.Millisecond * 1)
-		return strconv.Itoa(num * 2)
+		return promise.Resolve(strconv.Itoa(num * 2))
 	})
 	value, err := newPromise.Await(ctx)
 	if err != nil {

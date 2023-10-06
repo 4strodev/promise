@@ -40,13 +40,10 @@ func MergeAll[T any](ctx context.Context, promises ...*Promise[T]) *Promise[[]T]
 
 // Then is used to apply a transformation to a promise value returning a new promise with
 // the transformed value. If any error happens then the promise will return an error
-func Then[T, U any](ctx context.Context, prom *Promise[T], transformer func(T) U) *Promise[U] {
+func Then[T, U any](ctx context.Context, prom *Promise[T], transformer func(T) *Promise[U]) *Promise[U] {
 	value, err := prom.Await(ctx)
-	return New(func(resolve func(U), reject func(error)) {
-		if err != nil {
-			reject(err)
-		}
-		result := transformer(value)
-		resolve(result)
-	})
+	if err != nil {
+		return Reject[U](err)
+	}
+	return transformer(value)
 }
